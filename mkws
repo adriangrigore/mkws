@@ -1,4 +1,5 @@
 #!/bin/sh -e
+PATH=./bin:$PATH
 
 usage() {
 	>&2 printf "usage: %s url [path]\n" "$(basename "$0")"
@@ -8,6 +9,7 @@ usage() {
 test $# -lt 1 && usage
 
 srcdir=${2:-.}
+outputdir=output
 sharedir=${MKWSTHEMEDIR:-"$srcdir"/share}
 LANG=${LANG:-en_US.UTF-8}
 
@@ -18,14 +20,14 @@ then
 fi
 
 echo "Making s.css"
-pp "$sharedir"/s.uppcss "$1" > s.css
+pp "$sharedir"/s.uppcss "$1" > $outputdir/s.css
 
 for t in "$srcdir"/*.upphtml
 do
 	echo "Making $(basename "${t%.upphtml}".html)"
 	pp "$sharedir"/l.upphtml "$t" "$1" > \
-		"$(basename "${t%.upphtml}".html)"
+		$outputdir/"$(basename "${t%.upphtml}".html)"
 done
 
 echo "Making sitemap.xml"
-pp "$sharedir"/sitemap.uppxml "$1" > sitemap.xml
+pp "$sharedir"/sitemap.uppxml "$1" > $outputdir/sitemap.xml
